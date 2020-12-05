@@ -13,7 +13,7 @@ int main()
 		time (&timep);
 		p=gmtime(&timep);
 		printf("The child is talking at%d:%d:%d\n",8+p->tm_hour,p->tm_min,p->tm_sec);
-		Sleep(1000);
+		sleep(1);
 	}
     return 0;
 }
