@@ -13,5 +13,5 @@ int main()
 	    printf("The child is talking at%d:%d:%d\n",8+p->tm_hour,p->tm_min,p->tm_sec); 
 	    sleep(1000);
 	}
-    
+    return 0;
 }
