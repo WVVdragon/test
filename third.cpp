@@ -1,6 +1,7 @@
 #include "stdio.h"  
 #include "pthread.h"  
 #include "stdlib.h"  
+#include <sys/types.h>
 #include <sys/syscall.h>
 pthread_t thread1;  
   
