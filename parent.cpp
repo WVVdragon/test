@@ -1,17 +1,18 @@
 #include <unistd.h>
 #include <stdio.h>
-
+#include<time.h>
+#include <stdlib.h>
 int main(void)
 {
     pid_t pid;
 
-    int n = 0;  //测试父进程和子进程是否共享一个n
+    int n = 0; 
 
     pid = fork();
 
     if(pid < 0)
     {
-        /* 创建子进程失败 */
+        
         printf("fork fail.\n");
         return -1;
     }
