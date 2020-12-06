@@ -1,12 +1,10 @@
 #include "stdio.h"  
 #include "pthread.h"  
 #include "stdlib.h"  
-#include <sys/types.h>
-#include <sys/syscall.h>
 pthread_t thread1;  
   
 void *thread_dec(void *arg){  
-   printf("child%d",syscall(SYS_gettid));
+   printf("child%d\n",pthread_self());
 }  
 void main(void *arg){  
        
@@ -14,6 +12,6 @@ void main(void *arg){
      if(i != 0){  
          printf("线程创建失败！\n");  
      }  
-     printf("parent%d",syscall(SYS_gettid))   //调用自增1函数  
+     printf("parent%d\n",pthread_self());   //调用自增1函数  
      return ;  
 }  
