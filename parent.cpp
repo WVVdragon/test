@@ -2,6 +2,20 @@
 #include <stdio.h>
 #include<time.h>
 #include <stdlib.h>
+void child(void)
+{
+	int i;
+		for(i = 1;i < 1666;i++)
+		{
+			time_t timep;
+			struct tm *p;
+			time (&timep);
+			p=gmtime(&timep);
+			printf("The child is talking at%d:%d:%d\n",8+p->tm_hour,p->tm_min,p->tm_sec);
+			sleep(1);
+		}
+	return;
+}
 int main(void)
 {
     pid_t pid;
@@ -18,19 +32,8 @@ int main(void)
     }
     else if(pid == 0)
     {
-       	int i;
-		for(i = 1;i < 1666;i++)
-		{
-			time_t timep;
-			struct tm *p;
-			time (&timep);
-			p=gmtime(&timep);
-			printf("The child is talking at%d:%d:%d\n",8+p->tm_hour,p->tm_min,p->tm_sec);
-			sleep(1);
-		}
+       	child();
     }
-    else
-    {
        	int i;
 		for(i = 1;i < 1666;i++)
 		{
@@ -41,5 +44,5 @@ int main(void)
 			printf("The parent is talking at%d:%d:%d\n",8+p->tm_hour,p->tm_min,p->tm_sec);
 			sleep(1);
 		}
-    }
+  
 }
