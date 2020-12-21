@@ -1,95 +1,68 @@
 #include <stdio.h>
+#include <time.h>
+#include <unistd.h>
 #include <string.h>
 #include <sys/types.h>
-#include <unistd.h>
- 
-int main()
-{
-    char cmd[2100];
-    while(1)
-    {
-        printf("«Î ‰»Î≤Ÿ◊˜:");
-        scanf("%s",cmd);
-        int len=strlen(cmd),i;
-        if(cmd[0] == 'e' && cmd[1] == 'c') // echo
-        {
-            int flag=0;
-            for( i=5; i<len-1; i++)
-            {
-                if(cmd[i]!=' ') flag=1;
-                if(flag)
-                {
-                    putchar(cmd[i]);
-                }
-            }
-            if(flag) putchar('\n');
-        }
-        else if(cmd[0]=='q' || cmd[1]=='x' || cmd[0]=='b') // quit,exit,bye
-        {
-            printf("Bye\n");
-            return 0;
-        }
-        else if(cmd[0]=='h') // help
-        {
-            printf("/**********************************/\n");
-            printf("echo <content>\tprint a line content\n");
-            printf("quit,exit,bye\tend produce\n");
-            printf("cd <catalog>\techo catalog\n");
-            printf("jobs\techo process name and pid...\n");
-            printf("environ\techo environment variable\n");
-            printf("/**********************************/\n");
-        }
-        else
-        {
-            char cata[100];
-            int cnt=0;
-            if(cmd[0]=='c') // cd
-            {
-                int flag=0;
-                for( i=3; i<len; i++)
-                {
-                    if(cmd[i]!=' ') flag=1;
-                    if(flag)
-                    {
-                        cata[cnt++] = cmd[i];
-                    }
-                }
-                if(cnt==0)
-                {
-                    cata[0]='.';
-                    cata[1]='\0';
-                }
-            }
-            /* fork a child process */
-            pid_t pid = fork();
-            if (pid < 0)
-            {
-                /* error occurred */
-                fprintf(stderr, "Fork Failed");
-                return 1;
-            }
-            else if(pid==0)
-            {
-                if(cmd[0]=='c') // cd
-                {
-                    execlp("/bin/ls",cata,NULL);
-                }
-                else if(cmd[0]=='j') // jobs
-                {
-                    execlp("pstree","-p",NULL);
-                }
-                else if(cmd[0]=='e') // environ
-                {
-                    execlp("env","",NULL);
-                }
-            }
-            else
-            {
-                /* wait wait£¨until child process exit*/
-                wait();
-            }
-        }
-        printf("\n");
+#include <sys/wait.h>
+#define TRUE 1
+#define MAX_SIZE 1024
+
+void print_prompt(){
+    char cwd[MAX_SIZE];
+    if (getcwd(cwd, sizeof(cwd)) != NULL) {
+        printf("?? @?? :\033[0;34m%s\033[0m?? ", cwd);
+    }
+}
+
+int read_input(char* str){
+    char buf[MAX_SIZE]; 
+    fgets(buf, MAX_SIZE, stdin); 
+    if (strlen(buf) != 1) { 
+        strcpy(str, buf); 
+        return 1; 
+    } else {
+        return 0; 
+    }
+}
+
+int exec_command(char* user_input){
+    char* inputs[MAX_SIZE];
+    bzero(inputs, MAX_SIZE); // Very imortant, fuck gcc!
+    char* token = strtok(user_input, " ");
+    int i=0;
+    while (token != NULL) {
+        inputs[i] = token;
+        i++;
+        token = strtok(NULL, " "); 
+    }
+    if(strcmp(inputs[0], "exit")==0){
+        printf("Bye.\n");
+        return 1;
+    }
+    if(strcmp(inputs[0], "cd")==0){
+        chdir(inputs[1]);
+        return 0;
+    }
+    char path[100];
+    bzero(path, 100);
+    strcat(path, "/bin/");
+    strcat(path, inputs[0]);
+    if (fork() != 0){
+        int *status;
+        waitpid(-1, status, 0);
+    } else {
+        execve(path, inputs, 0);
     }
     return 0;
+}
+
+void main(){
+    while(TRUE){
+        char input_string[MAX_SIZE];
+        print_prompt();
+        if(!read_input(input_string)) continue;
+        int len = strlen(input_string);
+        input_string[len-1]='\0';
+        if(exec_command(input_string)) break;
+    }
 }
