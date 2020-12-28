@@ -10,7 +10,7 @@
 void print_prompt(){
     char cwd[MAX_SIZE];
     if (getcwd(cwd, sizeof(cwd)) != NULL) {
-        printf("?? @?? :\033[0;34m%s\033[0m?? ", cwd);
+        printf("Wei @Wei :%s ", cwd);
     }
 }
 
@@ -66,3 +66,4 @@ void main(){
         if(exec_command(input_string)) break;
     }
 }
+
